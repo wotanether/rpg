@@ -1,0 +1,300 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the drupal_rpg module.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function drupal_rpg_install() {
+  Drupal::messenger()->addMessage(__FUNCTION__);
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function drupal_rpg_uninstall() {
+  Drupal::messenger()->addMessage(__FUNCTION__);
+}
+
+/**
+ * Implements hook_schema().
+ */
+function drupal_rpg_schema() {
+  $schema['drupal_rpg_character'] = [
+    'description' => 'Table containing all characters',
+    'fields' => [
+      'id' => [
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'id , Primary Key: Unique record ID.',
+      ],
+      'uid' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'The {users}.uid of the user who created the record.',
+      ],
+      'cid' => [
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'description' => 'The unique id of the character',
+      ],
+      'name' => [
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'description' => 'The name of the character',
+      ],
+      'speciality' => [
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'description' => 'The speciality of the character',
+      ],
+      'level' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'The level of the character',
+      ],
+      'status' => [
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => 'active',
+        'description' => 'The status of the character',
+      ],
+      'xp' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'The current xp of the character',
+      ],
+      'xp_for_next_level' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'The xp needed for the next level',
+      ],
+      'health' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'The health of the character',
+      ],
+      'speed' => [
+        'type' => 'float',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'The speed of the character',
+      ],
+      'skill' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'The skill of the character',
+      ],
+      'luck' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'The luck of the character',
+      ],
+
+    ],
+    'primary key' => ['id'],
+  ];
+  $schema['drupal_rpg_ticket'] = [
+    'description' => 'Table containing all tickets',
+    'fields' => [
+      'id' => [
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'id , Primary Key: Unique record ID.',
+      ],
+      'uid' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'The {users}.uid of the user who created the record.',
+      ],
+      'tid' => [
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'description' => 'The unique id of the ticket',
+      ],
+      'name' => [
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'description' => 'The name of the ticket',
+      ],
+      'category' => [
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'description' => 'The category of the ticket',
+      ],
+      'difficulty' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'The difficulty of the ticket',
+      ],
+      'character' => [
+        'type' => 'varchar',
+        'length' => 255,
+        'default' => '',
+        'description' => 'The character link to the ticket',
+      ],
+      'progression' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'The progression of the ticket',
+      ],
+    ],
+    'primary key' => ['id'],
+  ];
+  $schema['drupal_rpg_tester'] = [
+    'description' => 'Table containing all testers',
+    'fields' => [
+      'id' => [
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'id , Primary Key: Unique record ID.',
+      ],
+      'uid' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'The {users}.uid of the user who created the record.',
+      ],
+      'tid' => [
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'description' => 'The unique id of the tester',
+      ],
+      'name' => [
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'description' => 'The name of the tester',
+      ],
+      'difficulty' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'The difficulty of the tester',
+      ],
+      'duration' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'The number of turn the tester is on the field',
+      ],
+    ],
+    'primary key' => ['id'],
+  ];
+  $schema['drupal_rpg_client'] = [
+    'description' => 'Table containing all clients',
+    'fields' => [
+      'id' => [
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'id , Primary Key: Unique record ID.',
+      ],
+      'uid' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'The {users}.uid of the user who created the record.',
+      ],
+      'cid' => [
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'description' => 'The unique id of the client',
+      ],
+      'name' => [
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'description' => 'The name of the client',
+      ],
+      'difficulty' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'The difficulty of the client',
+      ],
+      'needs' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'The health of the character',
+      ],
+    ],
+    'primary key' => ['id'],
+  ];
+  $schema['drupal_rpg_player'] = [
+    'description' => 'Table containing all players',
+    'fields' => [
+      'id' => [
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'id , Primary Key: Unique record ID.',
+      ],
+      'uid' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'The {users}.uid of the user who created the record.',
+      ],
+      'name' => [
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'description' => 'The name of the player',
+      ],
+      'company' => [
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'description' => 'The name of the player\'s company',
+      ],
+      'level' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'The level of the player',
+      ],
+      'xp' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'The current xp of the player',
+      ],
+      'xp_for_next_level' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'The xp needed for the next level',
+      ],
+      'money' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'The money of the player',
+      ],
+    ],
+    'primary key' => ['id'],
+  ];
+  return $schema;
+}

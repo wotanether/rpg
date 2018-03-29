@@ -1,0 +1,23 @@
+drupal_rpg.home:
+  path: '/home'
+  defaults:
+    _title: 'Home'
+    _form: '\Drupal\drupal_rpg\Form\HomeForm'
+  requirements:
+    _access: 'TRUE'
+
+drupal_rpg.game:
+  path: '/game'
+  defaults:
+    _title: 'Game'
+    _controller: '\Drupal\drupal_rpg\Controller\GameController::content'
+  requirements:
+    _access: 'TRUE'
+
+drupal_rpg.tutorial:
+  path: '/tutorial'
+  defaults:
+    _title: 'Tutorial'
+    _controller: '\Drupal\drupal_rpg\Controller\TutorialController::content'
+  requirements:
+    _access: 'TRUE'

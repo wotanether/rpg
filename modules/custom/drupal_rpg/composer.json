@@ -1,0 +1,14 @@
+{
+  "name": "drupal/drupal_rpg",
+  "type": "drupal-module",
+  "description": "Test rpg for Drupal",
+  "keywords": ["Drupal"],
+  "license": "GPL-2.0+",
+  "homepage": "https://www.drupal.org/project/drupal_rpg",
+  "minimum-stability": "dev",
+  "support": {
+    "issues": "https://www.drupal.org/project/issues/drupal_rpg",
+    "source": "http://cgit.drupalcode.org/drupal_rpg"
+  },
+  "require": { }
+}

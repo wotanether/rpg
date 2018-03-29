@@ -1,0 +1,12 @@
+global:
+  version: 1.0
+  css:
+    base:
+      css/drupal_rpg.css: {}
+  js:
+    "https://code.highcharts.com/highcharts.js": { external: true }
+    "https://code.highcharts.com/modules/exporting.js": { external: true }
+    js/drupal_rpg.js: {}
+  dependencies:
+    - core/drupal
+    - core/jquery

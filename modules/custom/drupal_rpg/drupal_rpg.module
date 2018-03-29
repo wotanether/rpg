@@ -1,0 +1,66 @@
+<?php
+
+/**
+ * @file
+ * Contains drupal_rpg.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Url;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+
+/**
+ * Implements hook_help().
+ */
+function drupal_rpg_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the drupal_rpg module.
+    case 'help.page.drupal_rpg':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Test rpg for Drupal') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function drupal_rpg_theme() {
+  return [
+    'drupal_rpg' => [
+      'render element' => 'children',
+    ],
+    'home_form' => [
+      'render element' => 'form',
+    ],
+  ];
+}
+
+/**
+ * Implements hook_preprocess_html().
+ */
+function drupal_rpg_preprocess_html() {
+  $routeMatch = \Drupal::routeMatch();
+  if(\Drupal::currentUser()->isAnonymous()){
+    if($routeMatch->getRouteName() != 'user.register'
+       && $routeMatch->getRouteName() != 'user.login'
+       && $routeMatch->getRouteName() != 'user.pass'
+       && $routeMatch->getRouteName() != 'user.reset'
+       && $routeMatch->getRouteName() != 'user.reset.form'
+       && $routeMatch->getRouteName() != 'user.reset.login'
+      ){
+      $response = new RedirectResponse(Url::fromRoute('user.login')->toString());
+      $response->send();
+    }
+  }
+}
+
+function drupal_rpg_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  if ($form_id == 'home_form') {
+    $form['#attributes']['class'] = ['home-form', 'small-6', 'large-6', 'large-offset-3', 'small-offset-3', 'columns'];
+  }
+
+}
