@@ -3,15 +3,21 @@
  * Placeholder file for custom sub-theme behaviors.
  *
  */
-(function ($, Drupal) {
+(function ($, window, Drupal, drupalSettings) {
 
-  /**
-   * Use this behavior as a template for custom Javascript.
-   */
-  Drupal.behaviors.exampleBehavior = {
-    attach: function (context, settings) {
-      //alert("I'm alive!");
-    }
-  };
+    /**
+     * Use this behavior as a template for custom Javascript.
+     */
+    Drupal.behaviors.newGame = {
+        attach: function (context, settings) {
 
-})(jQuery, Drupal);
+            $.fn.modal = function(){
+                $('#new-game-confirm').foundation('reveal', 'open');
+            };
+            var $btn = $('#new-game-confirm-btn');
+            $btn.click(function(){
+                $('#home-form').submit();
+            });
+        }
+    };
+})(jQuery, this, Drupal, drupalSettings);

@@ -70,6 +70,17 @@ class Manager{
     $tempstore->set('rpg_container', $rpg_container);
   }
 
+  public function deleteUserData($userId){
+    $database = \Drupal::database();
+
+    $objects =['character', 'ticket', 'tester', 'client'];
+    foreach ($objects as $object) {
+      $query = $database->delete('drupal_rpg_' . $object)
+                        ->condition('uid', $userId)
+                        ->execute();
+    }
+  }
+
 
   public function count($object) {
     $user = \Drupal::currentUser();
@@ -83,6 +94,36 @@ class Manager{
   }
 
   //CREATORS
+
+  public function createPlayer(Character $character) {
+    $user = \Drupal::currentUser();
+    $database = \Drupal::database();
+    $messenger = \Drupal::messenger();
+    $query = $database->insert('drupal_rpg_character')
+      ->fields([
+        'uid' => $user->id(),
+        'cid' => $character->id(),
+        'name' => $character->name(),
+        'speciality' => $character->speciality(),
+        'level' => $character->level(),
+        'status' => $character->status(),
+        'xp' => $character->xp(),
+        'xp_for_next_level' => $character->xpForNextLevel(),
+        'health' => $character->health(),
+        'speed' => $character->speed(),
+        'skill' => $character->skill(),
+        'luck' => $character->luck(),
+      ])
+      ->execute();
+    if($query != NULL) {
+      $messenger->addStatus($this->t('Character successfully created'));
+    }
+    else {
+      $messenger->addError($this->t('Character not created'));
+    }
+  }
+
+
 
   /**
    * @param Character $character

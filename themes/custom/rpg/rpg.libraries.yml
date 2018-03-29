@@ -1,11 +1,11 @@
 global:
-  version: VERSION
+  version: 1.0
   css:
     base:
       css/rpg.css: {}
   js:
     js/rpg.js: {}
   dependencies:
-    - core/drupal
     - core/jquery
+    - core/drupal
     - core/modernizr

@@ -162,6 +162,27 @@ class Character{
     }
   }
 
+
+  public function levelUp() {
+    $level = $this->level()+1;
+    $this->setLevel($level);
+    //plein d'autre choses à faire ici
+    //changer xpForNextLevel, changer stats...
+  }
+
+  public function gainXp($xp) {
+    $xp = (int) $xp;
+    $diffXp = $this->xpForNextLevel() - ($this->xp() + $xp);
+    if($diffXp >0){
+      $this->setXp($xp);
+    }
+    else{
+      $this->setXp($xp);
+      $this->levelUp();
+    }
+  }
+
+
   public function addTickets(Ticket $ticket) {
 	  $this->_tickets[$ticket->id()] = $ticket;
   }
