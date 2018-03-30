@@ -20,4 +20,16 @@
             });
         }
     };
+    $.fn.newPlayer = function(){
+        $('#new-player').foundation('reveal', 'close');
+        $("*").css("pointer-events", "auto");
+    };
+    $(document).ready(function () {
+        $('#new-player').foundation('reveal', 'open');
+        $(document).on('opened.fndtn.reveal', '[data-reveal]', function () {
+            $("*").css("pointer-events", "none");
+            $('#new-player *').css("pointer-events", "auto");
+        });
+    });
+
 })(jQuery, this, Drupal, drupalSettings);

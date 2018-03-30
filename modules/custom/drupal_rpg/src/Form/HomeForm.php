@@ -77,7 +77,9 @@ class HomeForm extends FormBase{
    * {@inheritdoc}.
    */
   public function NewGameSubmitForm(array &$form, FormStateInterface $form_state){
-
+    $user = \Drupal::currentUser();
+    $manager = new Manager();
+    $manager->deleteUserData($user->id());
     $form_state->setRedirect('drupal_rpg.tutorial');
   }
 

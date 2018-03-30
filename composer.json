@@ -6,6 +6,7 @@
     "require": {
         "composer/installers": "^1.0.24",
         "wikimedia/composer-merge-plugin": "^1.4",
+		"cweagans/composer-patches": "1.6.2",
         "drupal/devel": "^1.2",
         "drush/drush": "^9.2",
         "drupal/admin_toolbar": "^1.23",
@@ -46,7 +47,12 @@
             "drush/contrib/{$name}": ["type:drupal-drush"],
             "modules/custom/{$name}": ["type:drupal-custom-module"],
             "themes/custom/{$name}": ["type:drupal-custom-theme"]
-        }
+        },
+		"patches": {
+            "drupal/zurb_foundation": {
+                "[2918888] Drupal 8.4 requires jQuery 3, which no longer supports load()": "patches/2918888-fix-jquery-compat.patch"
+            }
+		}
     },
     "autoload": {
         "psr-4": {

@@ -7,8 +7,11 @@ use Drupal\drupal_rpg\Manager;
 use Drupal\drupal_rpg\Container;
 use Drupal\drupal_rpg\Client;
 use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Ajax\ReplaceCommand;
+use Drupal\Core\Ajax\InvokeCommand;
 use Drupal\Core\Ajax\CssCommand;
 use Drupal\Core\Ajax\HtmlCommand;
+use Drupal\drupal_rpg\Player;
 use Drupal\node\Entity\Node;
 
 class NewPlayerForm extends FormBase{
@@ -17,7 +20,7 @@ class NewPlayerForm extends FormBase{
    * {@inheritdoc}.
    */
   public function getFormId(){
-    return 'new_player';
+    return 'new_player_form';
   }
 
   /**
@@ -28,40 +31,85 @@ class NewPlayerForm extends FormBase{
     $form['player_name'] = [
       '#type' => 'textfield',
       '#title' => $this->t('What\'s your name?'),
+      '#required' => TRUE,
+      '#maxlength' => 50,
+      '#ajax' => [
+        'callback'=> [$this,'validateTextAjax'],
+        'event' => 'change',
+      ],
+      '#suffix' =>'<span class="text-message-player"></span>',
+
     ];
 
     $form['company_name'] = [
       '#type' => 'textfield',
       '#title' => $this->t('What\'s the name of your company?'),
+      '#required' => TRUE,
+      '#maxlength' => 50,
+      '#ajax' => [
+        'callback'=> [$this,'validateTextAjax'],
+        'event' => 'change',
+      ],
+      '#suffix' =>'<span class="text-message-company"></span>',
     ];
 
-    $form['confirm'] = [
+    $form['new_player_confirm'] = [
       '#type' => 'submit',
       '#value' => $this->t('Ok'),
+      '#ajax' => [
+        'callback' => [$this, 'submitAjax'],
+      ],
     ];
 
     return $form;
 
   }
+  function validateTextAjax(array &$form, FormStateInterface $form_state) {
+    $css = ['color'=>'red'];
+    $display = ['display'=>'none'];
+    if($form_state->getTriggeringElement()['#name'] == 'player_name' && strlen($form_state->getValue('player_name')) < 3) {
+      $messagePlayer = $this->t('Your name must be between 3 and 50 characters');
+    }
+    else{
+      $messagePlayer == "";
+    }
+    if($form_state->getTriggeringElement()['#name'] == 'company_name' && strlen($form_state->getValue('company_name')) < 3) {
+      $messageCompany = $this->t('Your company name must be between 3 and 50 characters');
+    }
+    else{
+      $messagePlayer == "";
+    }
 
+    if($messagePlayer == "" && $messageCompany == ""){
+      $display = ['display'=>'inline-block'];
+    }
+
+    $response = new AjaxResponse();
+    $response-> addCommand(new CssCommand('.text-message-player, .text-message-company',$css));
+    $response-> addCommand(new HtmlCommand('.text-message-player',$messagePlayer));
+    $response-> addCommand(new HtmlCommand('.text-message-company',$messageCompany));
+    $response-> addCommand(new CssCommand('#edit-new-player-confirm',$display));
+
+    return $response;
+  }
+
+  function submitAjax(array &$form, FormStateInterface $form_state){
+    $response = new AjaxResponse();
+    $response->addCommand(new InvokeCommand(NULL,'newPlayer'));
+    $response->addCommand(new ReplaceCommand('#new-player',""));
+
+    return $response;
+  }
   /**
    * {@inheritdoc}.
    */
   public function SubmitForm(array &$form, FormStateInterface $form_state){
-    $user = \Drupal::currentUser();
-    $database = \Drupal::database();
+    $manager = new Manager();
+    $name = $form_state->getValue('player_name');
+    $company = $form_state->getValue('company_name');
+    $player = new Player($name,$company, 1, 1, 300, 50000);
+    $manager->createPlayer($player);
 
-    $query = $database->insert('drupal_rpg_player')
-                      ->fields([
-                        'uid' => $user->id(),
-                        'name' => $form_state->getValue('player_name'),
-                        'company' => $form_state->getValue('company_name'),
-                        'level' => 1,
-                        'xp' => 0,
-                        'xp_for_next_level' => 300,
-                        'money' => '50000',
-                      ])
-                      ->execute();
   }
 
 }

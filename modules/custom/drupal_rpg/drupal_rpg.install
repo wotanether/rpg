@@ -23,6 +23,59 @@ function drupal_rpg_uninstall() {
  * Implements hook_schema().
  */
 function drupal_rpg_schema() {
+  $schema['drupal_rpg_player'] = [
+    'description' => 'Table containing all players',
+    'fields' => [
+      'id' => [
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'id , Primary Key: Unique record ID.',
+      ],
+      'uid' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'The {users}.uid of the user who created the record.',
+      ],
+      'name' => [
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'description' => 'The name of the player',
+      ],
+      'company' => [
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'description' => 'The name of the player\'s company',
+      ],
+      'level' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'The level of the player',
+      ],
+      'xp' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'The current xp of the player',
+      ],
+      'xp_for_next_level' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'The xp needed for the next level',
+      ],
+      'money' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'The money of the player',
+      ],
+    ],
+    'primary key' => ['id'],
+  ];
   $schema['drupal_rpg_character'] = [
     'description' => 'Table containing all characters',
     'fields' => [
@@ -60,6 +113,12 @@ function drupal_rpg_schema() {
         'unsigned' => TRUE,
         'not null' => TRUE,
         'description' => 'The level of the character',
+      ],
+      'salary' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'The amount of money you have to pay at the end of the year',
       ],
       'status' => [
         'type' => 'varchar',
@@ -239,59 +298,6 @@ function drupal_rpg_schema() {
         'unsigned' => TRUE,
         'not null' => TRUE,
         'description' => 'The health of the character',
-      ],
-    ],
-    'primary key' => ['id'],
-  ];
-  $schema['drupal_rpg_player'] = [
-    'description' => 'Table containing all players',
-    'fields' => [
-      'id' => [
-        'type' => 'serial',
-        'not null' => TRUE,
-        'description' => 'id , Primary Key: Unique record ID.',
-      ],
-      'uid' => [
-        'type' => 'int',
-        'unsigned' => TRUE,
-        'not null' => TRUE,
-        'description' => 'The {users}.uid of the user who created the record.',
-      ],
-      'name' => [
-        'type' => 'varchar',
-        'length' => 255,
-        'not null' => TRUE,
-        'description' => 'The name of the player',
-      ],
-      'company' => [
-        'type' => 'varchar',
-        'length' => 255,
-        'not null' => TRUE,
-        'description' => 'The name of the player\'s company',
-      ],
-      'level' => [
-        'type' => 'int',
-        'unsigned' => TRUE,
-        'not null' => TRUE,
-        'description' => 'The level of the player',
-      ],
-      'xp' => [
-        'type' => 'int',
-        'unsigned' => TRUE,
-        'not null' => TRUE,
-        'description' => 'The current xp of the player',
-      ],
-      'xp_for_next_level' => [
-        'type' => 'int',
-        'unsigned' => TRUE,
-        'not null' => TRUE,
-        'description' => 'The xp needed for the next level',
-      ],
-      'money' => [
-        'type' => 'int',
-        'unsigned' => TRUE,
-        'not null' => TRUE,
-        'description' => 'The money of the player',
       ],
     ],
     'primary key' => ['id'],

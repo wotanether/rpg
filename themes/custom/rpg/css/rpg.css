@@ -1,3 +1,4 @@
+/*****HOME*****/
 .home-form{
     background-color: #333333;
     padding-top: 2%;
@@ -11,4 +12,11 @@
 .home-form-title{
     text-align: center;
     color: #ffffff;
+}
+/*****NEW PLAYER*****/
+#new-player{
+    text-align: center;
+}
+#edit-new-player-confirm{
+    display: none;
 }

@@ -31,8 +31,10 @@
     {% if items %}
         <div class="icon-bar two-up">
             {% for item in items %}
+                {% set url = item.url.toString()|split('/') %}
+                {#{{ kint(item.url)}}#}
                 <a class="item" href="{{ item.url }}">
-                    <img src="themes/custom/rpg/images/exit.svg" >
+                    <img src="/themes/custom/rpg/images/{{ url|last  }}.svg" >
                     <label>{{ item.title }}</label>
                 </a>
             {% endfor %}

@@ -9,10 +9,10 @@ class TutorialController extends ControllerBase {
   public function content() {
     $form = \Drupal::formBuilder()->getForm('\Drupal\drupal_rpg\Form\NewPlayerForm');
 
-    $chart['chart'] = [
-      '#markup' => '<div id="line_charts_user"></div>',
+    return [
+      '#theme' => 'tutorial',
+      '#form' => $form,
     ];
 
-    return [$chart,$form];
   }
 }

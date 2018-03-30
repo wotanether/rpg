@@ -1,0 +1,30 @@
+{#
+/**
+ * @file
+ * Theme override for a 'form' element.
+ *
+ * Available variables
+ * - attributes: A list of HTML attributes for the wrapper element.
+ * - form: The child elements of the form.
+ *
+ * @see template_preprocess_form()
+ */
+#}
+
+<h2 class="new-player-form-title">New player</h2>
+<div class="row">
+    <div class="small-8 large-8 large-offset-2 small-offset-2 columns">
+        {{ form.player_name }}
+    </div>
+</div>
+<div class="row">
+    <div class=" small-8 large-8 large-offset-2 small-offset-2 columns">
+        {{ form.company_name }}
+    </div>
+</div>
+<div class="row">
+    <div class=" small-8 large-8 large-offset-2 small-offset-2 columns">
+        {{ form.new_player_confirm }}
+    </div>
+</div>
+{{ form|without('player_name', 'company_name', 'new_player_confirm') }}

@@ -8,6 +8,7 @@ class Character{
           $_name, // name of the character
           $_speciality, //speciality of the character(front,back,rh...)
           $_level, // level of the character
+          $_salary, // the amount of money you have to pay at the end of the year
           $_status, // active or burnout burnout characters can't do anything before their health
           $_xp, // the current xp of a character
           $_xpForNextLevel, // the xp need for the next level, higher levels need more xp
@@ -19,12 +20,13 @@ class Character{
 
           $_tickets = []; // an array of tickets assigned to a character
 
-  public function __construct($id, $name, $speciality, $level, $status, $xp, $xpForNextLevel, $health, $speed, $skill, $luck) {
+  public function __construct($id, $name, $speciality, $level, $salary, $status, $xp, $xpForNextLevel, $health, $speed, $skill, $luck) {
 
     $this->setId($id);
     $this->setName($name);
     $this->setSpeciality($speciality);
     $this->setLevel($level);
+    $this->setSalary($salary);
     $this->setStatus($status);
     $this->setXp($xp);
     $this->setXpForNextLevel($xpForNextLevel);
@@ -46,6 +48,10 @@ class Character{
 
   public function level() {
     return $this->_level;
+  }
+
+  public function salary() {
+    return $this->_salary;
   }
 
   public function speciality() {
@@ -100,6 +106,14 @@ class Character{
 
     if ($level > 0 && $level <= 99) {
       $this->_level = $level;
+    }
+  }
+
+  public function setSalary($salary) {
+    $salary = (int)$salary;
+
+    if ($salary > 0) {
+      $this->_salary = $salary;
     }
   }
 

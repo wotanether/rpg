@@ -15,7 +15,7 @@ class Manager{
   public function initUserData($userId){
     $database = \Drupal::database();
     $rpg_container = new Container();
-    $objects =['character', 'ticket', 'tester', 'client'];
+    $objects =['player', 'character', 'ticket', 'tester', 'client'];
 
     foreach ($objects as $object){
       $query = $database->select('drupal_rpg_' . $object, 'obj');
@@ -25,11 +25,21 @@ class Manager{
       $results = $query->execute()->fetchAll();
       foreach ($results as $result){
         switch ($object){
+          case 'player':
+            $player = new Player( $result->name,
+                                  $result->company,
+                                  $result->level,
+                                  $result->xp,
+                                  $result->xp_for_next_level,
+                                  $result->money);
+            $rpg_container->setPlayer($player);
+            break;
           case 'character':
             $character = new Character( $result->cid,
                                         $result->name,
                                         $result->speciality,
                                         $result->level,
+                                        $result->salary,
                                         $result->status,
                                         $result->xp,
                                         $result->xp_for_next_level,
@@ -71,13 +81,19 @@ class Manager{
   }
 
   public function deleteUserData($userId){
-    $database = \Drupal::database();
 
-    $objects =['character', 'ticket', 'tester', 'client'];
-    foreach ($objects as $object) {
-      $query = $database->delete('drupal_rpg_' . $object)
-                        ->condition('uid', $userId)
-                        ->execute();
+    $database = \Drupal::database();
+    $query = $database->select('drupal_rpg_player', 'pla')
+                      ->fields('pla')
+                      ->condition('pla.uid', $userId, '=');
+    $player = $query->execute()->fetchAll();
+    if(!empty($player)){
+      $objects =['player', 'character', 'ticket', 'tester', 'client'];
+      foreach ($objects as $object) {
+        $query = $database->delete('drupal_rpg_' . $object)
+          ->condition('uid', $userId)
+          ->execute();
+      }
     }
   }
 
@@ -95,35 +111,29 @@ class Manager{
 
   //CREATORS
 
-  public function createPlayer(Character $character) {
+  /**
+   * @param Player $player
+   * @throws \Exception
+   */
+  public function createPlayer(Player $player) {
+    $rpg_container = new Container();
     $user = \Drupal::currentUser();
     $database = \Drupal::database();
-    $messenger = \Drupal::messenger();
-    $query = $database->insert('drupal_rpg_character')
+    $query = $database->insert('drupal_rpg_player')
       ->fields([
         'uid' => $user->id(),
-        'cid' => $character->id(),
-        'name' => $character->name(),
-        'speciality' => $character->speciality(),
-        'level' => $character->level(),
-        'status' => $character->status(),
-        'xp' => $character->xp(),
-        'xp_for_next_level' => $character->xpForNextLevel(),
-        'health' => $character->health(),
-        'speed' => $character->speed(),
-        'skill' => $character->skill(),
-        'luck' => $character->luck(),
+        'name' => $player->name(),
+        'company' => $player->company(),
+        'level' => $player->level(),
+        'xp' => $player->xp(),
+        'xp_for_next_level' => $player->xpForNextLevel(),
+        'money' => $player->money(),
       ])
       ->execute();
-    if($query != NULL) {
-      $messenger->addStatus($this->t('Character successfully created'));
-    }
-    else {
-      $messenger->addError($this->t('Character not created'));
-    }
+    $rpg_container->setPlayer($player);
+    $tempstore = \Drupal::service('user.private_tempstore')->get('drupal_rpg');
+    $tempstore->set('rpg_container', $rpg_container);
   }
-
-
 
   /**
    * @param Character $character
@@ -141,6 +151,7 @@ class Manager{
                                'name' => $character->name(),
                                'speciality' => $character->speciality(),
                                'level' => $character->level(),
+                               'salary' => $character->salary(),
                                'status' => $character->status(),
                                'xp' => $character->xp(),
                                'xp_for_next_level' => $character->xpForNextLevel(),

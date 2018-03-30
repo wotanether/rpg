@@ -57,7 +57,7 @@ class Player{
 
   public function setCompany($company) {
     if (is_string($company)) {
-      $this->_name = $company;
+      $this->_company = $company;
     }
   }
 
