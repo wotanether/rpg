@@ -47,7 +47,13 @@ class Manager{
                                         $result->speed,
                                         $result->skill,
                                         $result->luck);
-            $rpg_container->addCharacter($character);
+            if($character->getStatus() == 'market'){
+              $rpg_container->addToCharMarket($character);
+            }
+            else{
+              $rpg_container->addCharacter($character);
+            }
+
             break;
           case 'ticket':
             $ticket = new Ticket( $result->tid,
@@ -75,6 +81,8 @@ class Manager{
         }
       }
     }
+
+    //$rpg_container->shuffleCharMarket();
 
     $tempstore = \Drupal::service('user.private_tempstore')->get('drupal_rpg');
     $tempstore->set('rpg_container', $rpg_container);
@@ -122,12 +130,12 @@ class Manager{
     $query = $database->insert('drupal_rpg_player')
       ->fields([
         'uid' => $user->id(),
-        'name' => $player->name(),
-        'company' => $player->company(),
-        'level' => $player->level(),
-        'xp' => $player->xp(),
-        'xp_for_next_level' => $player->xpForNextLevel(),
-        'money' => $player->money(),
+        'name' => $player->getName(),
+        'company' => $player->getCompany(),
+        'level' => $player->getLevel(),
+        'xp' => $player->getXp(),
+        'xp_for_next_level' => $player->getXpForNextLevel(),
+        'money' => $player->getMoney(),
       ])
       ->execute();
     $rpg_container->setPlayer($player);
@@ -143,30 +151,70 @@ class Manager{
   public function createCharacter(Character $character) {
     $user = \Drupal::currentUser();
     $database = \Drupal::database();
-    $messenger = \Drupal::messenger();
     $query = $database->insert('drupal_rpg_character')
                       ->fields([
                                'uid' => $user->id(),
-                               'cid' => $character->id(),
-                               'name' => $character->name(),
-                               'speciality' => $character->speciality(),
-                               'level' => $character->level(),
-                               'salary' => $character->salary(),
-                               'status' => $character->status(),
-                               'xp' => $character->xp(),
-                               'xp_for_next_level' => $character->xpForNextLevel(),
-                               'health' => $character->health(),
-                               'speed' => $character->speed(),
-                               'skill' => $character->skill(),
-                               'luck' => $character->luck(),
-                               ])
-                      ->execute();
-    if($query != NULL) {
-      $messenger->addStatus($this->t('Character successfully created'));
+                               'cid' => $character->getId(),
+                               'name' => $character->getName(),
+                               'speciality' => $character->getSpeciality(),
+                               'level' => $character->getLevel(),
+                               'salary' => $character->getSalary(),
+                               'status' => $character->getStatus(),
+                               'xp' => $character->getXp(),
+                               'xp_for_next_level' => $character->getXpForNextLevel(),
+                               'health' => $character->getHealth(),
+                               'speed' => $character->getSpeed(),
+                               'skill' => $character->getSkill(),
+                               'luck' => $character->getLuck(),
+                               ]);
+    $query->execute();
+  }
+
+  /**
+   * @throws \Exception
+   */
+  public function randomCharacter(){
+    $specialityList = ['back', 'front', 'rh', 'pm', 'graphist', 'sales'];
+
+    $namesList = ['Allison','Arthur','Ana','Alex','Arlene','Alberto','Barry','Bertha','Bill','Bonnie','Bret','Beryl','Chantal','Cristobal','Claudette','Charley',
+              'Cindy','Chris','Dean','Dolly','Danny','Danielle','Dennis','Debby','Erin','Edouard','Erika','Earl','Emily','Ernesto','Felix','Fay','Fabian','Frances',
+              'Franklin','Florence','Gabielle','Gustav','Grace','Gaston','Gert','Gordon','Humberto','Hanna','Henri','Hermine','Harvey','Helene','Iris','Isidore',
+              'Isabel','Ivan','Irene','Isaac','Jerry','Josephine','Juan','Jeanne','Jose','Joyce','Karen','Kyle','Kate','Karl','Katrina','Kirk','Lorenzo','Lili',
+              'Larry','Lisa','Lee','Leslie','Michelle','Marco','Mindy','Maria','Michael','Noel','Nana','Nicholas','Nicole','Nate','Nadine','Olga','Omar','Odette',
+              'Otto','Ophelia','Oscar','Pablo','Paloma','Peter','Paula','Philippe','Patty','Rebekah','Rene','Rose','Richard','Rita','Rafael','Sebastien','Sally',
+              'Sam','Shary','Stan','Sandy','Tanya','Teddy','Teresa','Tomas','Tammy','Tony','Van','Vicky', 'Victor','Virginie','Vince','Valerie','Wendy','Wilfred',
+              'Wanda','Walter','Wilma','William','Kumiko','Aki','Miharu','Chiaki','Michiyo','Itoe','Nanaho','Reina','Emi','Yumi','Ayumi','Kaori','Sayuri','Rie',
+              'Miyuki','Hitomi','Naoko','Miwa','Etsuko','Akane','Kazuko','Miyako','Youko','Sachiko','Mieko','Toshie', 'Junko'];
+    shuffle($specialityList);
+    shuffle($namesList);
+    $name = array_slice($namesList,0,1);
+    $speciality = array_slice($specialityList,0,1);
+    $player =$this->selectPlayer();
+    if((is_object($player[0]))){
+      $level = mt_rand(1,$player[0]->level);
     }
-    else {
-      $messenger->addError($this->t('Character not created'));
+    else{
+      $level = mt_rand(1,5);
     }
+    $user = \Drupal::currentUser();
+    $database = \Drupal::database();
+    $query = $database->insert('drupal_rpg_character')
+              ->fields([
+              'uid' => $user->id(),
+              'cid' => 'char_'.$speciality[0].'_'.mt_rand(1,999),
+              'name' => $name[0],
+              'speciality' => $speciality[0],
+              'level' => $level,
+              'salary' => 30000+$level*(mt_rand(1,6)*1000),
+              'status' => 'market',
+              'xp' => mt_rand(0,200)*$level,
+              'xp_for_next_level' => $level*200,
+              'health' => mt_rand(100,150)+$level*mt_rand(10,20),
+              'speed' => mt_rand(1,20)/10,
+              'skill' => mt_rand(5,20)+$level*mt_rand(1,5),
+              'luck' => mt_rand(5,20)+$level*mt_rand(1,5),
+              ]);
+    $query->execute();
   }
 
   /**
@@ -176,24 +224,17 @@ class Manager{
   public function createTicket(Ticket $ticket) {
     $user = \Drupal::currentUser();
     $database = \Drupal::database();
-    $messenger = \Drupal::messenger();
     $query = $database->insert('drupal_rpg_ticket')
                       ->fields([
                         'uid' => $user->id(),
-                        'tid' => $ticket->id(),
-                        'name' => $ticket->name(),
-                        'category' => $ticket->category(),
-                        'difficulty' => $ticket->difficulty(),
-                        'character' => $ticket->character(),
-                        'progression' => $ticket->progression(),
-                      ])
-                      ->execute();
-    if($query != NULL) {
-      $messenger->addStatus($this->t('Ticket successfully created'));
-    }
-    else {
-      $messenger->addError($this->t('Ticket not created'));
-    }
+                        'tid' => $ticket->getId(),
+                        'name' => $ticket->getName(),
+                        'category' => $ticket->getCategory(),
+                        'difficulty' => $ticket->getDifficulty(),
+                        'character' => $ticket->getCharacter(),
+                        'progression' => $ticket->getProgression(),
+                      ]);
+    $query->execute();
   }
 
   /**
@@ -203,22 +244,15 @@ class Manager{
   public function createTester(Tester $tester) {
     $user = \Drupal::currentUser();
     $database = \Drupal::database();
-    $messenger = \Drupal::messenger();
     $query = $database->insert('drupal_rpg_tester')
                       ->fields([
                         'uid' => $user->id(),
-                        'tid' => $tester->id(),
-                        'name' => $tester->name(),
-                        'difficulty' => $tester->difficulty(),
-                        'duration' => $tester->duration(),
-                      ])
-                      ->execute();
-    if($query != NULL) {
-      $messenger->addStatus($this->t('Tester successfully created'));
-    }
-    else {
-      $messenger->addError($this->t('Tester not created'));
-    }
+                        'tid' => $tester->getId(),
+                        'name' => $tester->getName(),
+                        'difficulty' => $tester->getDifficulty(),
+                        'duration' => $tester->getDuration(),
+                      ]);
+    $query->execute();
   }
 
   /**
@@ -227,26 +261,29 @@ class Manager{
    */
   public function createClient(Client $client) {
     $user = \Drupal::currentUser();
-    $messenger = \Drupal::messenger();
     $database = \Drupal::database();
     $query = $database->insert('drupal_rpg_client')
                       ->fields([
                         'uid' => $user->id(),
-                        'cid' => $client->id(),
-                        'name' => $client->name(),
-                        'difficulty' => $client->difficulty(),
-                        'needs' => $client->needs(),
-                      ])
-                      ->execute();
-    if($query != NULL) {
-      $messenger->addStatus($this->t('Client successfully created'));
-    }
-    else {
-      $messenger->addError($this->t('Client not created'));
-    }
+                        'cid' => $client->getId(),
+                        'name' => $client->getName(),
+                        'difficulty' => $client->getDifficulty(),
+                        'needs' => $client->getNeeds(),
+                      ]);
+    $query->execute();
   }
 
   //SELECTORS
+
+  public function selectPlayer(){
+    $user = \Drupal::currentUser();
+    $database = \Drupal::database();
+    $query = $database->select('drupal_rpg_player', 'pla');
+    $query->fields('pla');
+    $query->condition('pla.uid', $user->id(), '=');
+
+    return $query->execute()->fetchAll();
+  }
 
   public function selectCharacter($characterId){
     $database = \Drupal::database();
@@ -286,151 +323,109 @@ class Manager{
 
   //UPDATERS
 
+  public function updatePlayer(Player $player) {
+    $database = \Drupal::database();
+    $query = $database->update('drupal_rpg_player')
+      ->fields([
+        'name' => $player->getName(),
+        'company' => $player->getCompany(),
+        'level' => $player->getLevel(),
+        'xp' => $player->getXp(),
+        'xp_for_next_level' => $player->getXpForNextLevel(),
+        'money' => $player->getMoney(),
+      ])
+      ->condition('name', $player->getName(), '=');
+    $query->execute();
+  }
+
+
+
   public function updateCharacter(Character $character) {
     $database = \Drupal::database();
-    $messenger = \Drupal::messenger();
     $query = $database->update('drupal_rpg_character')
                       ->fields([
-                        'name' => $character->name(),
-                        'level' => $character->level(),
-                        'speciality' => $character->speciality(),
-                        'status' => $character->status(),
-                        'xp' => $character->xp(),
-                        'xp_for_next_level' => $character->xpForNextLevel(),
-                        'health' => $character->health(),
-                        'speed' => $character->speed(),
-                        'skill' => $character->skill(),
-                        'luck' => $character->luck(),
+                        'name' => $character->getName(),
+                        'speciality' => $character->getSpeciality(),
+                        'level' => $character->getLevel(),
+                        'salary' => $character->getSalary(),
+                        'status' => $character->getStatus(),
+                        'xp' => $character->getXp(),
+                        'xp_for_next_level' => $character->getXpForNextLevel(),
+                        'health' => $character->getHealth(),
+                        'speed' => $character->getSpeed(),
+                        'skill' => $character->getSkill(),
+                        'luck' => $character->getLuck(),
                       ])
-      ->condition('cid', $character->id(), '=')
-      ->execute();
-    if($query != NULL) {
-      $messenger->addStatus($this->t('Character successfully updated'));
-    }
-    else {
-      $messenger->addError($this->t('Character not updated'));
-    }
+      ->condition('cid', $character->getId(), '=');
+    $query->execute();
   }
 
   public function updateTicket(Ticket $ticket) {
     $database = \Drupal::database();
-    $messenger = \Drupal::messenger();
     $query = $database->update('drupal_rpg_ticket')
                       ->fields([
-                        'name' => $ticket->name(),
-                        'category' => $ticket->category(),
-                        'difficulty' => $ticket->difficulty(),
-                        'character' => $ticket->character(),
-                        'progression' => $ticket->progression(),
+                        'name' => $ticket->getName(),
+                        'category' => $ticket->getCategory(),
+                        'difficulty' => $ticket->getDifficulty(),
+                        'character' => $ticket->getCharacter(),
+                        'progression' => $ticket->getProgression(),
       ])
-      ->condition('tid', $ticket->id(), '=')
-      ->execute();
-    if($query != NULL) {
-      $messenger->addStatus($this->t('Ticket successfully updated'));
-    }
-    else {
-      $messenger->addError($this->t('Ticket not updated'));
-    }
+      ->condition('tid', $ticket->getId(), '=');
+    $query->execute();
   }
 
   public function updateTester(Tester $tester) {
     $database = \Drupal::database();
-    $messenger = \Drupal::messenger();
     $query = $database->update('drupal_rpg_tester')
                       ->fields([
-                        'name' => $tester->name(),
-                        'difficulty' => $tester->difficulty(),
-                        'duration' => $tester->duration(),
+                        'name' => $tester->getName(),
+                        'difficulty' => $tester->getDifficulty(),
+                        'duration' => $tester->getDuration(),
                       ])
-      ->condition('cid', $tester->id(), '=')
-      ->execute();
-    if($query != NULL) {
-      $messenger->addStatus($this->t('Tester successfully updated'));
-    }
-    else {
-      $messenger->addError($this->t('Tester not updated'));
-    }
+      ->condition('cid', $tester->getId(), '=');
+    $query->execute();
   }
 
   public function updateClient(Client $client) {
     $database = \Drupal::database();
-    $messenger = \Drupal::messenger();
     $query = $database->update('drupal_rpg_client')
                       ->fields([
-                        'name' => $client->name(),
-                        'difficulty' => $client->difficulty(),
-                        'needs' => $client->needs(),
+                        'name' => $client->getName(),
+                        'difficulty' => $client->getDifficulty(),
+                        'needs' => $client->getNeeds(),
                       ])
-      ->condition('cid', $client->id(), '=')
-      ->execute();
-    if($query != NULL) {
-      $messenger->addStatus($this->t('Client successfully updated'));
-    }
-    else {
-      $messenger->addError($this->t('Client not updated'));
-    }
+      ->condition('cid', $client->getId(), '=');
+    $query->execute();
   }
 
   //DELETERS
 
   function deleteCharacter(Character $character){
     $database = \Drupal::database();
-    $messenger = \Drupal::messenger();
-
     $query = $database->delete('drupal_rpg_character')
-      ->condition('cid', $character->id())
-      ->execute();
-    if($query != NULL) {
-      $messenger->addStatus($this->t('Character successfully deleted'));
-    }
-    else {
-      $messenger->addError($this->t('Character not deleted'));
-    }
+      ->condition('cid', $character->getId());
+    $query->execute();
   }
 
   function deleteTicket(Ticket $ticket){
     $database = \Drupal::database();
-    $messenger = \Drupal::messenger();
-
     $query = $database->delete('drupal_rpg_ticket')
-      ->condition('tid', $ticket->id())
-      ->execute();
-    if($query != NULL) {
-      $messenger->addStatus($this->t('Ticket successfully deleted'));
-    }
-    else {
-      $messenger->addError($this->t('Ticket not deleted'));
-    }
+      ->condition('tid', $ticket->getId());
+    $query->execute();
   }
 
   function deleteTester(Tester $tester){
     $database = \Drupal::database();
-    $messenger = \Drupal::messenger();
-
     $query = $database->delete('drupal_rpg_tester')
-      ->condition('tid', $tester->id())
-      ->execute();
-    if($query != NULL) {
-      $messenger->addStatus($this->t('Tester successfully deleted'));
-    }
-    else {
-      $messenger->addError($this->t('Tester not deleted'));
-    }
+      ->condition('tid', $tester->getId());
+    $query->execute();
   }
 
   function deleteClient(Client $client){
     $database = \Drupal::database();
-    $messenger = \Drupal::messenger();
-
     $query = $database->delete('drupal_rpg_client')
-      ->condition('cid', $client->id())
-      ->execute();
-    if($query != NULL) {
-      $messenger->addStatus($this->t('Client successfully deleted'));
-    }
-    else {
-      $messenger->addError($this->t('Client not deleted'));
-    }
+      ->condition('cid', $client->getId());
+    $query->execute();
   }
 
 

@@ -21,19 +21,19 @@ class Client{
   }
 
   //GETTERS
-  public function id() {
+  public function getId() {
     return $this->_id;
   }
 
-  public function name() {
+  public function getName() {
     return $this->_name;
   }
 
-	public function needs() {
+	public function getNeeds() {
     return $this->_needs;
   }
 
-  public function difficulty() {
+  public function getDifficulty() {
     return $this->_difficulty;
   }
 
@@ -71,8 +71,10 @@ class Client{
     $duration = '';
     $difficulty = '';
     //Look if there is 4 or less tester on the field
-    if(count($GLOBALS['container']->tester()) <=4){
-      $chance = mt_rand(0,100)*($this->difficulty()/10);
+    $tempstore = \Drupal::service('user.private_tempstore')->get('drupal_rpg');
+    $rpg_container = $tempstore->get('rpg_container');
+    if(count($rpg_container->getTesters()) <=4){
+      $chance = mt_rand(0,100)*($this->getDifficulty()/10);
       if($chance >= 70){
         return new Tester($id, $name, $duration, $difficulty);
       }

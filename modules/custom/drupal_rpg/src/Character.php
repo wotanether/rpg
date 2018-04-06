@@ -38,55 +38,55 @@ class Character{
   }
 
 	//GETTERS
-	public function id() {
+	public function getId() {
 		return $this->_id;
 	}
 	
-	public function name() {
+	public function getName() {
 		return $this->_name;
 	}
 
-  public function level() {
+  public function getLevel() {
     return $this->_level;
   }
 
-  public function salary() {
+  public function getSalary() {
     return $this->_salary;
   }
 
-  public function speciality() {
+  public function getSpeciality() {
     return $this->_speciality;
   }
 
-  public function status() {
+  public function getStatus() {
     return $this->_status;
   }
 
-  public function xp() {
+  public function getXp() {
     return $this->_xp;
   }
 
-  public function xpForNextLevel() {
+  public function getXpForNextLevel() {
     return $this->_xpForNextLevel;
   }
 
-	public function health() {
+	public function getHealth() {
 		return $this->_health;
 	}
 	
-	public function speed() {
+	public function getSpeed() {
 		return $this->_speed;
 	}
 	
-	public function skill() {
+	public function getSkill() {
 		return $this->_skill;
 	}
 	
-	public function luck() {
+	public function getLuck() {
 		return $this->_luck;
 	}
 
-	public function tickets() {
+	public function getTickets() {
     return $this->_tickets;
   }
 	
@@ -147,14 +147,12 @@ class Character{
   public function setHealth($health) {
     $health = (int) $health;
 
-    if ($health > 0 && $health < 200) {
+    if ($health > 0 && $health < 1000) {
       $this->_health = $health;
     }
   }
 
   public function setSpeed($speed) {
-    $speed = (int) $speed;
-
     if ($speed > 0 && $speed <= 2) {
       $this->_speed = $speed;
     }
@@ -178,7 +176,7 @@ class Character{
 
 
   public function levelUp() {
-    $level = $this->level()+1;
+    $level = $this->getLevel()+1;
     $this->setLevel($level);
     //plein d'autre choses à faire ici
     //changer xpForNextLevel, changer stats...
@@ -186,7 +184,7 @@ class Character{
 
   public function gainXp($xp) {
     $xp = (int) $xp;
-    $diffXp = $this->xpForNextLevel() - ($this->xp() + $xp);
+    $diffXp = $this->getXpForNextLevel() - ($this->getXp() + $xp);
     if($diffXp >0){
       $this->setXp($xp);
     }
@@ -203,14 +201,14 @@ class Character{
 
   //ticket resolution
   public function resolveTickets(){
-    if ($this->status() == 'active'){
-      $tickets = $this->tickets();
+    if ($this->getStatus() == 'active'){
+      $tickets = $this->getTickets();
       foreach ($tickets as $ticket){
         //Compare tickets stats to character stats to get a resolve time in turn
-        $difficulty = $ticket->difficulty();
-        $progression = $ticket->progression();
-        $skill = $this->skill();
-        $speed = $this->speed();
+        $difficulty = $ticket->getDifficulty();
+        $progression = $ticket->getProgression();
+        $skill = $this->getSkill();
+        $speed = $this->getSpeed();
         $turnToResolve = round(($difficulty-($skill/25))/$speed);
         $ticket->setProgression($progression+(100/$turnToResolve));
         $GLOBALS['container']->addTicket($ticket);
@@ -220,10 +218,10 @@ class Character{
   }
 
   public function burnout(){
-	  if ($this->_health <= 0){
+	  if ($this->getHealth() <= 0){
 	    $this->setStatus('burnout');
     }
-    elseif ($this->_health > 0){
+    elseif ($this->getHealth() > 0){
       $this->setStatus('burnout');
     }
   }

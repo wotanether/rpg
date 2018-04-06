@@ -1,0 +1,149 @@
+{#
+/**
+ * @file
+ * Theme override for custom contoller.
+ *
+ * Available variables
+ * - player: The object containing informations like level, money xp ...
+ * - characters: An array of objects containing informations about the characters of the user
+ * - tickets: An array of objects containing informations about the tickets actualy in game
+ * - testers: An array of objects containing informations about the testers actualy in game
+ * - clients: An array of objects containing informations about the clients
+ *
+ * @see hook_theme()
+ */
+#}
+
+
+{#PLAYER INFOS#}
+{% set playerPercentXp = (player.getXp() * 100)/player.getXpForNextLevel() %}
+
+<div id = "top-bar-game" class = "row text-center">
+    <div class="small-1 medium-1 large-1 columns">
+        <nav class="tab-bar">
+            <section class="left-small">
+                <ul class="accordion" data-accordion>
+                    <li class="accordion-navigation">
+                        <a href = "#front-link" class="menu-icon"><span></span></a>
+                        <div id="front-link" class="content">
+                            <a href="{{ url('<front>') }}">Quit game</a>
+                        </div>
+                    </li>
+                </ul>
+
+            </section>
+        </nav>
+    </div>
+    <div class = "small-11 medium-11 large-11 columns">
+        <div class = "row">
+            <div class = "small-6 medium-6 large-6 columns">
+                {{ player.getName() }}
+            </div>
+            <div class = "small-6 medium-6 large-6 columns left">
+                {{ player.getMoney }} €
+            </div>
+        </div>
+    </div>
+</div>
+<div class = "progress small-12 medium-12 large-12 round">
+    <span class = "meter" style = "width: {{ playerPercentXp }}%"></span>
+</div>
+
+{#MARKET CHARACTER MODAL#}
+<button id ="char-market-btn" class = "small-3 medium-3 large-3"><a href = ""  data-reveal-id = "char-market">Go to market</a></button>
+<div id="char-market" class="xlarge reveal-modal " data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+    <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+    <div class = "row">
+        {% for character in charMarket %}
+            {% set charPercentXp = (character.getXp() * 100)/character.getXpForNextLevel() %}
+            <div class = " {{ character.getId() }} small-4 medium-4 large-4 columns">
+                <div class = "row">
+                    <h4 class = "small-6 medium-6 large-6 columns text-left">{{ character.getName()|capitalize }}</h4>
+                    <h4 class = "small-6 medium-6 large-6 columns text-right">{{ character.getSpeciality()|capitalize }}</h4>
+                </div>
+                <div class = "row">
+                    <h4 class = "small-12 medium-12 large-12  columns text-center">Lvl {{ character.getLevel() }}</h4>
+                    <h4 class = "small-12 medium-12 large-12  columns text-center">{{ character.getSalary() }} €/year</h4>
+                </div>
+                <div class = "row">
+                    <div class = "progress small-10 medium-10 large-10 small-offset-1 medium-offset-1 large-offset-1 round">
+                        <span class = "meter" style = "width: {{ charPercentXp }}%"></span>
+                    </div>
+                </div>
+                <dl class = "row">
+                    <dt class = "small-6 medium-6 large-6 columns text-left">Health</dt>
+                    <dd class = "small-6 medium-6 large-6 columns text-right">{{ character.getHealth }}</dd>
+
+                    <dt class = "small-6 medium-6 large-6 columns text-left">Skill</dt>
+                    <dd class = "small-6 medium-6 large-6 columns text-right">{{ character.getSkill }}</dd>
+
+                    <dt class = "small-6 medium-6 large-6 columns text-left">Speed</dt>
+                    <dd class = "small-6 medium-6 large-6 columns text-right">{{ character.getSpeed }}</dd>
+
+                    <dt class = "small-6 medium-6 large-6 columns text-left">Luck</dt>
+                    <dd class = "small-6 medium-6 large-6 columns text-right">{{ character.getLuck }}</dd>
+                </dl>
+                <div class = "row">
+                    <div class = "small-12 medium-12 large-12  columns text-center">
+                        <form class="recruit-form" data-drupal-selector="recruit-form" action="/game" method="post" id="recruit-form" accept-charset="UTF-8">
+                            {{ recruitForm["recruit_"~character.getId()] }}
+                            {{ recruitForm.player_name }}
+                            {{ recruitForm.form_id }}
+                            {{ recruitForm.form_build_id }}
+                            {{ recruitForm.form_token }}
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+{#ACTIVE CHARACTER MODAL#}
+
+<button id ="employees-btn" class = "small-3 medium-3 large-3"><a href = ""  data-reveal-id = "employees">My employees</a></button>
+<div id="employees" class="xlarge reveal-modal " data-reveal aria-labelledby="modalTitle" aria-hidden="true" role="dialog">
+    <a class="close-reveal-modal" aria-label="Close">&#215;</a>
+    <div class = "row">
+        {% for character in characters %}
+            {% set charPercentXp = (character.getXp() * 100)/character.getXpForNextLevel() %}
+            <div class = " character-cv small-4 medium-4 large-4 columns">
+                <div class = "row">
+                    <h4 class = "small-6 medium-6 large-6 columns text-left">{{ character.getName()|capitalize }}</h4>
+                    <h4 class = "small-6 medium-6 large-6 columns text-right">{{ character.getSpeciality()|capitalize }}</h4>
+                </div>
+                <div class = "row">
+                    <h4 class = "small-12 medium-12 large-12  columns text-center">Lvl {{ character.getLevel() }}</h4>
+                    <h4 class = "small-12 medium-12 large-12  columns text-center">{{ character.getSalary() }} €/year</h4>
+                </div>
+                <div class = "row">
+                    <div class = "progress small-10 medium-10 large-10 small-offset-1 medium-offset-1 large-offset-1 round">
+                        <span class = "meter" style = "width: {{ charPercentXp }}%"></span>
+                    </div>
+                </div>
+                <dl class = "row">
+                    <dt class = "small-6 medium-6 large-6 columns text-left">Health</dt>
+                    <dd class = "small-6 medium-6 large-6 columns text-right">{{ character.getHealth }}</dd>
+
+                    <dt class = "small-6 medium-6 large-6 columns text-left">Skill</dt>
+                    <dd class = "small-6 medium-6 large-6 columns text-right">{{ character.getSkill }}</dd>
+
+                    <dt class = "small-6 medium-6 large-6 columns text-left">Speed</dt>
+                    <dd class = "small-6 medium-6 large-6 columns text-right">{{ character.getSpeed }}</dd>
+
+                    <dt class = "small-6 medium-6 large-6 columns text-left">Luck</dt>
+                    <dd class = "small-6 medium-6 large-6 columns text-right">{{ character.getLuck }}</dd>
+                </dl>
+                <div class = "row">
+                    <div class = "small-12 medium-12 large-12  columns text-center">
+                        {{ fireForm["fire_"~character.getId()] }}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+
+

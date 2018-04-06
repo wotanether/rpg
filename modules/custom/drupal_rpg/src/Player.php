@@ -23,27 +23,27 @@ class Player{
 
 	//GETTERS
 	
-	public function name() {
+	public function getName() {
 		return $this->_name;
 	}
 
-  public function company() {
+  public function getCompany() {
     return $this->_company;
   }
 
-  public function level() {
+  public function getLevel() {
     return $this->_level;
   }
 
-  public function xp() {
+  public function getXp() {
     return $this->_xp;
   }
 
-  public function xpForNextLevel() {
+  public function getXpForNextLevel() {
     return $this->_xpForNextLevel;
   }
 
-  public function money() {
+  public function getMoney() {
     return $this->_money;
   }
 	
@@ -93,7 +93,7 @@ class Player{
   }
 
   public function levelUp() {
-    $level = $this->level()+1;
+    $level = $this->getLevel()+1;
     $this->setLevel($level);
     //plein d'autre choses à faire ici
     //changer xpForNextLevel, changer stats...
@@ -101,7 +101,7 @@ class Player{
 
   public function gainXp($xp) {
     $xp = (int) $xp;
-    $diffXp = $this->xpForNextLevel() - ($this->xp() + $xp);
+    $diffXp = $this->getXpForNextLevel() - ($this->getXp() + $xp);
     if($diffXp >0){
       $this->setXp($xp);
     }
@@ -113,7 +113,19 @@ class Player{
 
   public function gainMoney($money) {
     $money = (int) $money;
-    $this->setMoney($this->money() + $money);
+    $this->setMoney($this->getMoney() + $money);
+  }
+
+  public function looseMoney($money) {
+    $money = (int) $money;
+    $newMoney = $this->getMoney() - $money;
+    if($newMoney >0) {
+      $this->setMoney($newMoney);
+    }
+    else {
+      //fonction de banqueroute
+    }
+
   }
 
 }

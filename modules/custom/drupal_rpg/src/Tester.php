@@ -23,19 +23,19 @@ class Tester{
   }
 
   //GETTERS
-  public function id() {
+  public function getId() {
     return $this->_id;
   }
 
-  public function name() {
+  public function getName() {
     return $this->_name;
   }
 
-	public function duration() {
+	public function getDuration() {
     return $this->_duration;
   }
 
-	public function difficulty() {
+	public function getDifficulty() {
     return $this->_difficulty;
   }
 
@@ -104,18 +104,18 @@ class Tester{
                     $this->t('trial'),
                     ];
 
-    if ($this->difficulty() >=1 && $this->difficulty() < 4){
+    if ($this->getDifficulty() >=1 && $this->getDifficulty() < 4){
       $ticketDifficulty = mt_rand(1,4);
     }
-    else if ($this->difficulty() >=4 && $this->difficulty() < 7){
+    else if ($this->getDifficulty() >=4 && $this->getDifficulty() < 7){
       $ticketDifficulty = mt_rand(3,9);
     }
 
-    else if ($this->difficulty() >=7 && $this->difficulty() <=10){
+    else if ($this->getDifficulty() >=7 && $this->getDifficulty() <=10){
       $ticketDifficulty = mt_rand(5,10);
     }
 
-    $id = $this->name() . '_' . mt_rand(0,99999);
+    $id = $this->getName() . '_' . mt_rand(0,99999);
     $category = $category_list[mt_rand(0, count($category_list) - 1)];
     $prefix = $prefix_list[mt_rand(0, count($prefix_list) - 1)];
     $suffix = $suffix_list[mt_rand(0, count($suffix_list) - 1)];

@@ -24,27 +24,27 @@ class Ticket {
   }
 
   //GETTERS
-	public function id() {
+	public function getId() {
     return $this->_id;
   }
 
-  public function name() {
+  public function getName() {
     return $this->_name;
   }
 
-  public function category() {
+  public function getCategory() {
     return $this->_category;
   }
 
-  public function difficulty() {
+  public function getDifficulty() {
     return $this->_difficulty;
   }
 
-  public function character() {
+  public function getCharacter() {
     return $this->_character;
   }
 
-  public function progression() {
+  public function getProgression() {
     return $this->_progression;
   }
 
@@ -86,22 +86,25 @@ class Ticket {
   }
 
   public function doDammage(){
-	  if($this->progression() < 100) {
-	    $character = $this->character();
-      $dammage = $this->difficulty();
+	  if($this->getProgression() < 100) {
+	    $character = $this->getCharacter();
+      $dammage = $this->getDifficulty();
 	    if($character == null){
 	      //if tickets are not attached by project manager by the end of turn, they dammage every character
-        foreach ($GLOBALS['container']->characters() as $character){
-          $character->setHealth($character->health() - $dammage);
-          $GLOBALS['container']->addCharacter($character);
+        $tempstore = \Drupal::service('user.private_tempstore')->get('drupal_rpg');
+        $rpg_container = $tempstore->get('rpg_container');
+        foreach ($rpg_container->getCharacters() as $character){
+          $character->setHealth($character->getHealth() - $dammage);
+          $rpg_container->addCharacter($character);
         }
       }
       else{
         $tempstore = \Drupal::service('user.private_tempstore')->get('drupal_rpg');
         $rpg_container = $tempstore->get('rpg_container');
-        $character = $rpg_container->characters()[$this->character()];
-        $health = $character->health();
+        $character = $rpg_container->characters()[$this->getCharacter()];
+        $health = $character->getHealth();
         $character->setHealth($health - $dammage);
+        $rpg_container->addCharacter($character);
       }
 
     }

@@ -1,3 +1,22 @@
+#block-rpg-content{
+    background-color: wheat;
+    height: 80vh;
+    min-height: 500px;
+    padding: 0.5rem;
+}
+
+button, .button{
+    background-color: #009688;
+}
+
+button:hover, .button:hover, button:focus, .button:focus{
+    background-color: #067167;
+}
+
+.progress .meter{
+    background-color: #009688;
+}
+
 /*****HOME*****/
 .home-form{
     background-color: #333333;
@@ -19,4 +38,57 @@
 }
 #edit-new-player-confirm{
     display: none;
+}
+/*****TUTORIAL*****/
+
+#skip-tuto-btn a, #skip-confirm-btn a{
+    color: white;
+}
+
+/*****GAME*****/
+
+#top-bar-game{
+    height: 12%;
+    margin-bottom: 1%;
+}
+
+#top-bar-game .accordion a{
+    background-color: #333333;
+}
+
+#front-link{
+    width: 300%;
+    z-index: 1000;
+    background-color: #333333;
+}
+#front-link a{
+    color: white;
+}
+
+/*****CHAR-MARKET*****/
+#char-market-btn a{
+    color: white;
+}
+#char-market dl dt, #char-market dl dd{
+   margin-bottom: 0;
+}
+
+#char-market .character-cv{
+    margin-bottom: 1rem;
+    border: 1px solid #333333;
+    border-radius: 5px;
+}
+
+/*****EMPLOYEE*****/
+#employees-btn a{
+    color: white;
+}
+#employees dl dt, #employees dl dd{
+    margin-bottom: 0;
+}
+
+#employees .character-cv{
+    margin-bottom: 1rem;
+    border: 1px solid #333333;
+    border-radius: 5px;
 }
